@@ -3,21 +3,18 @@ import { z } from 'zod';
 import db, { logActivity, notify, todayStr } from '../db.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { saveSelfie, imageSimilarity } from '../utils/helpers.js';
+import { getFence, setFence, clearFence, checkFence } from '../geofence.js';
 
 const router = Router();
 router.use(requireAuth);
 
 const punchSchema = z.object({
-  selfie: z.string().startsWith(
-    'data:image/',
-    'Selfie must come from the camera.'
-  ),
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
+  selfie: z.string().startsWith('data:image/', 'Selfie must come from the camera.'),
+  lat: z.number().min(-90).max(90).nullable(),
+  lng: z.number().min(-180).max(180).nullable(),
   livenessPassed: z.boolean(),
   livenessScore: z.number().min(0).max(1).optional(),
 });
-
 
 // ---- Employee: today's status ----
 router.get('/today', (req, res) => {
@@ -35,8 +32,6 @@ router.get('/mine', (req, res) => {
   res.json({ records: rows });
 });
 
-
-
 // ---- Employee: punch in ----
 router.post('/punch-in', (req, res) => {
   const parsed = punchSchema.safeParse(req.body);
@@ -46,6 +41,10 @@ router.post('/punch-in', (req, res) => {
   if (!livenessPassed) {
     return res.status(400).json({ error: 'Liveness check failed. Blink and move slightly, then retry.' });
   }
+
+  // Geofence check
+  const fenceError = checkFence(lat, lng);
+  if (fenceError) return res.status(400).json({ error: fenceError });
 
   const date = todayStr();
   const existing = db.prepare('SELECT id FROM attendance WHERE user_id = ? AND work_date = ?')
@@ -136,6 +135,25 @@ router.get('/', requireRole('admin'), (req, res) => {
   ).all(...params, limit, offset);
 
   res.json({ records: rows, total, page: Number(page), pageSize: limit });
+});
+
+// ---- Admin: get / set / delete geofence ----
+router.get('/geofence', requireRole('admin'), (_req, res) => {
+  res.json({ fence: getFence() });
+});
+
+router.post('/geofence', requireRole('admin'), (req, res) => {
+  const { lat, lng, radiusM } = req.body;
+  if (typeof lat !== 'number' || typeof lng !== 'number' || typeof radiusM !== 'number') {
+    return res.status(400).json({ error: 'lat, lng and radiusM must be numbers.' });
+  }
+  setFence(lat, lng, radiusM);
+  res.json({ ok: true, fence: getFence() });
+});
+
+router.delete('/geofence', requireRole('admin'), (_req, res) => {
+  clearFence();
+  res.json({ ok: true });
 });
 
 export default router;
