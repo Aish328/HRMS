@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+html, body, #root { height: 100%; }
+body {
+  @apply font-body bg-mist-50 text-ink-900 antialiased;
+}
+.dark body { @apply bg-ink-950 text-mist-100; }
+
+/* Glassmorphism surfaces */
+.glass {
+  @apply rounded-2xl border border-white/60 bg-white/70 shadow-glass backdrop-blur-xl;
+}
+.dark .glass {
+  @apply border-white/10 bg-ink-800/60;
+}
+
+/* Quiet scrollbars */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { @apply rounded bg-mist-300; }
+.dark ::-webkit-scrollbar-thumb { @apply bg-ink-600; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.leaflet-container { @apply rounded-2xl; z-index: 0; }
