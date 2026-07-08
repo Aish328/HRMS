@@ -3,6 +3,7 @@ import { LayoutDashboard, Users, Fingerprint, CalendarCheck2, FileBarChart2, Scr
 import { useState } from 'react';
 import { useAuth } from '../../store/auth';
 import { NotificationBell, ThemeToggle } from '../../components/shared';
+import logo from '../../assets/instruments-logo-64310482.png';
 
 const nav = [
   { to: '/admin', end: true, label: 'Dashboard', icon: LayoutDashboard },
@@ -39,13 +40,13 @@ export default function AdminLayout() {
       {/* Sidebar (desktop) */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-mist-200/70 bg-white/60 p-4 backdrop-blur-xl dark:border-ink-700 dark:bg-ink-900/60 lg:flex">
         <div className="mb-8 flex items-center gap-2.5 px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt-Mer500">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt-500">
             <svg viewBox="0 0 32 32" className="h-6 w-6">
               <path d="M8 22 A9 9 0 0 1 24 22" stroke="#F0A020" strokeWidth="3" fill="none" strokeLinecap="round" />
               <circle cx="16" cy="11" r="2.5" fill="white" />
             </svg>
           </div>
-          <span className="font-display text-lg font-extrabold tracking-tight">SEL</span>
+          <span className="font-display text-lg font-extrabold tracking-tight">SEL HRMS</span>
         </div>
         {links}
         <div className="mt-auto">
@@ -60,7 +61,12 @@ export default function AdminLayout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-ink-950/50 lg:hidden" onClick={() => setMobileOpen(false)}>
           <div className="glass h-full w-64 rounded-none p-4" onClick={(e) => e.stopPropagation()}>
-            <p className="mb-6 px-2 font-display text-lg font-extrabold">SEL</p>
+            <div className="mb-6 px-2 flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white p-0.5 shadow-glass">
+                <img src={logo} alt="SEL HRMS" className="h-8 w-8 object-contain" />
+              </div>
+              <span className="font-display text-lg font-extrabold">SEL HRMS</span>
+            </div>
             {links}
           </div>
         </div>

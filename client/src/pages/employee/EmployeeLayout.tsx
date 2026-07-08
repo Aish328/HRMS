@@ -19,7 +19,7 @@ export default function EmployeeLayout() {
           <p className="text-xs text-ink-600/60 dark:text-mist-300/50">
             {new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'short' })}
           </p>
-          <p className="font-display text-base font-bold leading-tight">Hi, {user?.name?.split(' ')[0]}</p>
+          <p className="font-display text-base font-bold leading-tight">Hi, {user?.name?.split(' ')[0]} 👋</p>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />
