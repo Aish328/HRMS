@@ -136,3 +136,4 @@ For a real deployment, put the server behind any HTTPS reverse proxy (Caddy is a
 - Back up `server/data/hrms.db` and `server/uploads/` regularly (both are plain files).
 - Read `docs/SECURITY.md`.
 # HRMS
+test
