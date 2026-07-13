@@ -4,7 +4,7 @@ import { z } from 'zod';
 import db, { logActivity } from '../db.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import { publicUser } from './auth.js';
-
+// employees data
 const router = Router();
 router.use(requireAuth, requireRole('admin'));
 
