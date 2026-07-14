@@ -1,5 +1,5 @@
 # SEL HRMS
-
+# change
 A production-ready HR management system with two experiences in one app:
 
 - **Admin dashboard** (desktop web) — analytics, employee management, attendance review with map + selfie verification, leave approvals, reports, audit trail.
