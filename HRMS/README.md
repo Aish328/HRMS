@@ -1,6 +1,5 @@
-# SEL HRMS 
+# SEL HRMS
 
-# changes made
 A production-ready HR management system with two experiences in one app:
 
 - **Admin dashboard** (desktop web) — analytics, employee management, attendance review with map + selfie verification, leave approvals, reports, audit trail.
@@ -136,3 +135,5 @@ For a real deployment, put the server behind any HTTPS reverse proxy (Caddy is a
 - Serve over HTTPS (required for camera/GPS off-localhost).
 - Back up `server/data/hrms.db` and `server/uploads/` regularly (both are plain files).
 - Read `docs/SECURITY.md`.
+# HRMS
+test
