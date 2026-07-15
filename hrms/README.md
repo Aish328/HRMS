@@ -1,4 +1,4 @@
-# Meridian HRMS
+# SEL HRMS
 
 A production-ready HR management system with two experiences in one app:
 
