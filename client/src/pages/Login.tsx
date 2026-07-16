@@ -43,15 +43,20 @@ export default function Login() {
 
       <div className="w-full max-w-sm animate-rise">
         <div className="mb-8 text-center">
+<<<<<<< HEAD
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-cobalt-500 shadow-glow">
             <svg viewBox="0 0 32 32" className="h-8 w-8">
               <path d="M8 22 A9 9 0 0 1 24 22" stroke="#F0A020" strokeWidth="3" fill="none" strokeLinecap="round" />
               <circle cx="16" cy="11" r="2.5" fill="white" />
             </svg>
           </div>
+=======
+          <img src="/logo.png" alt="SEL" className="mx-auto mb-4 h-16 w-16 object-contain" />
+>>>>>>> ed260a70ae8d6f77d6e81f47c700f72a628e8802
           <h1 className="font-display text-2xl font-extrabold tracking-tight">SEL HRMS</h1>
           <p className="mt-1 text-sm text-ink-600/70 dark:text-mist-300/60">Your workday, from punch-in to punch-out.</p>
         </div>
+
 
         <form onSubmit={submit} className="glass space-y-4 p-6">
           <Field label="Work email" error={errors.email}>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, MapPin, ScanFace, CheckCircle2, RefreshCw } from 'lucide-react';
 import { api } from '../../api/client';
@@ -17,6 +17,10 @@ import type { AttendanceRecord } from '../../types';
  */
 
 type Step = 'idle' | 'camera' | 'captured' | 'submitting' | 'done';
+
+const LIVENESS_EVENTS_NEEDED = 3;
+const MOTION_MIN = 2.2; // below = static image
+const MOTION_MAX = 60;  // above = camera being waved around
 
 function frameSignature(video: HTMLVideoElement, canvas: HTMLCanvasElement): number[] | null {
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -37,6 +41,26 @@ function diffScore(a: number[], b: number[]): number {
   return sum / a.length; // mean absolute pixel change (0–255)
 }
 
+/** Map getUserMedia failures to actionable messages instead of one generic toast. */
+function cameraErrorMessage(err: unknown): string {
+  const name = (err as DOMException | undefined)?.name;
+  switch (name) {
+    case 'NotAllowedError':
+    case 'PermissionDeniedError':
+      return 'Camera permission was denied. Click the camera icon in the address bar, allow access, then try again.';
+    case 'NotFoundError':
+    case 'DevicesNotFoundError':
+      return 'No camera was found on this device.';
+    case 'NotReadableError':
+    case 'TrackStartError':
+      return 'The camera is in use by another app. Close it (Zoom, Teams, etc.) and try again.';
+    case 'OverconstrainedError':
+      return 'The camera does not support the requested resolution. Try a different device.';
+    default:
+      return 'Could not start the camera. Check browser permissions and try again.';
+  }
+}
+
 export default function Punch() {
   const toast = useToast();
   const navigate = useNavigate();
@@ -44,33 +68,42 @@ export default function Punch() {
   const [step, setStep] = useState<Step>('idle');
   const [photo, setPhoto] = useState<string | null>(null);
   const [livenessOk, setLivenessOk] = useState(false);
-  const [motionLevel, setMotionLevel] = useState(0);
+  // State (not a ref) so the progress bar actually re-renders as events accrue.
+  const [motionEvents, setMotionEvents] = useState(0);
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null | 'denied'>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const probeRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const lastSigRef = useRef<number[] | null>(null);
-  const motionEventsRef = useRef(0);
 
   const mode: 'in' | 'out' = today && !today.punch_out_at ? 'out' : 'in';
   const alreadyDone = !!today?.punch_out_at;
 
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
   useEffect(() => {
     api<{ attendance: AttendanceRecord | null }>('/attendance/today')
       .then((d) => setToday(d.attendance))
-      .catch((e) => { setToday(null); toast('error', e.message); });
+      .catch((e: Error) => { setToday(null); toast('error', e.message); });
     return () => stopCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const stopCamera = () => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-  };
-
   const startCamera = async () => {
+    // getUserMedia only exists on HTTPS or localhost. Fail with a clear
+    // message instead of a confusing generic one.
+    if (!navigator.mediaDevices?.getUserMedia) {
+      toast('error', 'Camera requires a secure connection. Open this page over https:// or on localhost.');
+      return;
+    }
+
+    stopCamera(); // never leak a previous stream on retake
     setLivenessOk(false);
-    motionEventsRef.current = 0;
+    setMotionEvents(0);
     lastSigRef.current = null;
     setPhoto(null);
 
@@ -89,15 +122,27 @@ export default function Punch() {
         audio: false,
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
+      // NOTE: do NOT touch videoRef here — the <video> element isn't mounted
+      // yet (it renders only when step === 'camera'). The effect below
+      // attaches the stream once the element exists. Assigning here was the
+      // race that produced a black preview.
       setStep('camera');
-    } catch {
-      toast('error', 'Camera access is required to punch. Allow it in your browser settings.');
+    } catch (err) {
+      console.error('getUserMedia failed:', err);
+      toast('error', cameraErrorMessage(err));
     }
   };
+
+  // Attach the stream after the <video> element mounts.
+  useEffect(() => {
+    if (step !== 'camera') return;
+    const video = videoRef.current;
+    const stream = streamRef.current;
+    if (!video || !stream) return;
+    video.srcObject = stream;
+    // play() can reject with a benign AbortError if the element re-renders.
+    video.play().catch(() => {});
+  }, [step]);
 
   // Liveness sampling loop
   useEffect(() => {
@@ -109,11 +154,15 @@ export default function Punch() {
       if (!sig) return;
       if (lastSigRef.current) {
         const d = diffScore(lastSigRef.current, sig);
-        setMotionLevel(d);
         // Natural blink/head movement lands in this band. Below = static image;
         // far above = camera being waved around, which we also don't count.
-        if (d > 2.2 && d < 60) motionEventsRef.current += 1;
-        if (motionEventsRef.current >= 3) setLivenessOk(true);
+        if (d > MOTION_MIN && d < MOTION_MAX) {
+          setMotionEvents((n) => {
+            const next = n + 1;
+            if (next >= LIVENESS_EVENTS_NEEDED) setLivenessOk(true);
+            return next;
+          });
+        }
       }
       lastSigRef.current = sig;
     }, 350);
@@ -122,18 +171,20 @@ export default function Punch() {
 
   const capture = () => {
     const video = videoRef.current;
-    if (!video || !livenessOk) return;
+    if (!video || !livenessOk || video.videoWidth === 0) return;
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext('2d')!.drawImage(video, 0, 0);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) { toast('error', 'Could not capture the photo. Try again.'); return; }
+    ctx.drawImage(video, 0, 0);
     setPhoto(canvas.toDataURL('image/jpeg', 0.85));
     stopCamera();
     setStep('captured');
   };
 
   const submit = async () => {
-    if (!photo) return;
+    if (!photo || step === 'submitting') return;
     setStep('submitting');
     try {
       const body = JSON.stringify({
@@ -148,8 +199,8 @@ export default function Punch() {
       setStep('done');
       toast('success', mode === 'in' ? 'Punched in. Have a good day!' : 'Punched out. See you tomorrow!');
       setTimeout(() => navigate('/app'), 1400);
-    } catch (e: any) {
-      toast('error', e.message);
+    } catch (e) {
+      toast('error', e instanceof Error ? e.message : 'Something went wrong. Please try again.');
       setStep('captured');
     }
   };
@@ -181,7 +232,7 @@ export default function Punch() {
         <div className="relative aspect-square overflow-hidden rounded-2xl bg-ink-900">
           {step === 'camera' && (
             <>
-              <video ref={videoRef} playsInline muted className="h-full w-full scale-x-[-1] object-cover" />
+              <video ref={videoRef} playsInline muted autoPlay className="h-full w-full scale-x-[-1] object-cover" />
               {/* Face guide */}
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className={`h-3/5 w-1/2 rounded-[50%] border-4 transition-colors duration-500 ${livenessOk ? 'border-jade-400' : 'border-white/50'}`} />
@@ -194,7 +245,7 @@ export default function Punch() {
               {!livenessOk && (
                 <div className="absolute left-3 top-3 h-1.5 w-24 overflow-hidden rounded-full bg-white/20">
                   <div className="h-full rounded-full bg-saffron-400 transition-all"
-                    style={{ width: `${Math.min(100, (motionEventsRef.current / 3) * 100)}%` }} />
+                    style={{ width: `${Math.min(100, (motionEvents / LIVENESS_EVENTS_NEEDED) * 100)}%` }} />
                 </div>
               )}
             </>
