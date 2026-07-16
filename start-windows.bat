@@ -1,5 +1,5 @@
 @echo off
-REM Meridian HRMS - one-click start for Windows
+REM SEL HRMS - one-click start for Windows
 cd /d "%~dp0"
 
 where node >nul 2>nul
