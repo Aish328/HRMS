@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-      {/* Ambient background: the "meridian" arc */}
+      {/* Ambient background: the "SEL" arc */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-[100%] bg-gradient-to-b from-cobalt-500/25 via-cobalt-400/10 to-transparent blur-2xl" />
         <div className="absolute bottom-0 left-1/2 h-64 w-[700px] -translate-x-1/2 rounded-[100%] bg-saffron-400/15 blur-3xl" />
@@ -49,7 +49,7 @@ export default function Login() {
               <circle cx="16" cy="11" r="2.5" fill="white" />
             </svg>
           </div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight">Meridian HRMS</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight">SEL HRMS</h1>
           <p className="mt-1 text-sm text-ink-600/70 dark:text-mist-300/60">Your workday, from punch-in to punch-out.</p>
         </div>
 

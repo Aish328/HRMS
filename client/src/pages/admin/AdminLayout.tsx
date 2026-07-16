@@ -46,7 +46,7 @@ export default function AdminLayout() {
               <circle cx="16" cy="11" r="2.5" fill="white" />
             </svg>
           </div>
-          <span className="font-display text-lg font-extrabold tracking-tight">Meridian</span>
+          <span className="font-display text-lg font-extrabold tracking-tight">SEL</span>
         </div>
         {links}
         <div className="mt-auto">
