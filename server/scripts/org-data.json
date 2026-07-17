@@ -1,0 +1,637 @@
+[
+  {
+    "code": "SEL/MGMT/001",
+    "name": "Rajinder Kaul",
+    "mail": "rajinder.kaul@sharikaindia.com",
+    "desig": "CMD",
+    "dept": "Management",
+    "head": "",
+    "role": "employee"
+  },
+  {
+    "code": "SEL/MGMT/002",
+    "name": "Sanjay Verma",
+    "mail": "sanjay.verma@sharikaindia.com",
+    "desig": "CEO",
+    "dept": "Management",
+    "head": "",
+    "role": "employee"
+  },
+  {
+    "code": "SEL/MGMT/003",
+    "name": "Ravi Bhan",
+    "mail": "ravi.bhan@sharikaindia.com",
+    "desig": "COO",
+    "dept": "Management",
+    "head": "",
+    "role": "employee"
+  },
+  {
+    "code": "SEL/MGMT/004",
+    "name": "Arun Kaul",
+    "mail": "arun.kaul@sharikaindia.com",
+    "desig": "CMO",
+    "dept": "Management",
+    "head": "",
+    "role": "employee"
+  },
+  {
+    "code": "SEL/MGMT/005",
+    "name": "Sushil Badlani",
+    "mail": "sushil.badlani@sharikaindia.com",
+    "desig": "Director- Contronics",
+    "dept": "Management",
+    "head": "",
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/001",
+    "name": "Ram Kumar",
+    "mail": "ramkumar.seepl@gmail.com",
+    "desig": "Site Supervisior",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/002",
+    "name": "Devender Singh",
+    "mail": "devender.singh@sharikaindia.com",
+    "desig": "Site Manager",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/003",
+    "name": "Sunita K Padmaji",
+    "mail": "sunita.padmaji@sharikaindia.com",
+    "desig": "AGM",
+    "dept": "PMO",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/008",
+    "name": "Rakesh Shah",
+    "mail": "rakesh.kumar9717@gmail.com",
+    "desig": "Site Supervisior",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/004",
+    "name": "Abhishek Kumar",
+    "mail": "abhishek.kumar@sharikaindia.com",
+    "desig": "Manager",
+    "dept": "Marketing & Sales",
+    "head": "rajinder Kaul",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/005",
+    "name": "Shalini Mittal",
+    "mail": "shalini.mittal@sharikaindia.com",
+    "desig": "Manager",
+    "dept": "Tender",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/016",
+    "name": "Yudhvir Singh",
+    "mail": "youdhvirsalathia9414@gmail.com",
+    "desig": "Site Executive",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/018",
+    "name": "Rakesh Kumar A\\c",
+    "mail": "rakesh.kumar@sharikaindia.com",
+    "desig": "Manager",
+    "dept": "PMO",
+    "head": "Sunita K Padmaji",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/013",
+    "name": "Devender Kumar",
+    "mail": "sel.nod.013@sharikaindia.com",
+    "desig": "Office Assistant",
+    "dept": "HR & Admin",
+    "head": "Sushmita Roy",
+    "placeholder": true,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/017",
+    "name": "Raju Kanojia",
+    "mail": "rajukanojia1993@gmail.com",
+    "desig": "Office Assistant",
+    "dept": "Finance & Admin",
+    "head": "Garvita Asati",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/006",
+    "name": "Topan Kumar Singh",
+    "mail": "tk.singh@sharikaindia.com",
+    "desig": "Assistant Manager",
+    "dept": "Finance & Admin",
+    "head": "Garvita Asati",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/026",
+    "name": "Ravender Pal Singh",
+    "mail": "r.p.singh853485@gmail.com",
+    "desig": "Technician",
+    "dept": "Engineering",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/021",
+    "name": "Munna Kumar",
+    "mail": "munnabodhgaya883@gmail.com",
+    "desig": "Store Incharge",
+    "dept": "Purchase & Store",
+    "head": "Sonu Singh Rana",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/027",
+    "name": "Avadesh Kumar",
+    "mail": "avdheshkumar01995@gmail.com",
+    "desig": "Technician",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/009",
+    "name": "Janak Raj",
+    "mail": "sel.nod.009@sharikaindia.com",
+    "desig": "Office Assistant",
+    "dept": "HR & Admin",
+    "head": "Sushmita Roy",
+    "placeholder": true,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/010",
+    "name": "Hem Chandra Jha",
+    "mail": "Hjha453@gmail.com",
+    "desig": "Site Supervisor",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/011",
+    "name": "Pawan Kumar",
+    "mail": "pawan.sharika@gmail.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/025",
+    "name": "Sonu Singh Rana",
+    "mail": "sonu.singh@sharikaindia.com",
+    "desig": "Manager",
+    "dept": "Purchase & Store",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/014",
+    "name": "Rakesh Kumar Roy",
+    "mail": "rakeshroy753@gmail.com",
+    "desig": "Site Supervisor",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/020",
+    "name": "Sunil Thappa",
+    "mail": "sunilthappa1500@gmail.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/015",
+    "name": "Robin Singh",
+    "mail": "solar.projects@sharikaindia.com",
+    "desig": "Assistant Manager",
+    "dept": "Engineering",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/019",
+    "name": "Pradeep Kumar",
+    "mail": "pk693500@gmail.com",
+    "desig": "Technician",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/023",
+    "name": "Deepen Das",
+    "mail": "deepen.das@sharikaindia.com",
+    "desig": "AGM",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/024",
+    "name": "Nikhil Bharadwaj",
+    "mail": "nikhil.bhardwaj@sharikaindia.com",
+    "desig": "Site Engineer- EMS",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/022",
+    "name": "Ramandeep Singh",
+    "mail": "ramandeep.singh@sharikaindia.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/028",
+    "name": "Jyoti Pramanick",
+    "mail": "jyotipramanick4@gmail.com",
+    "desig": "Assistant Manager",
+    "dept": "Products & Services",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/029",
+    "name": "Mahesh Kumar Yadav",
+    "mail": "cable.erection@sharikaindia.com",
+    "desig": "Sr. Design Executive",
+    "dept": "Engineering",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/034",
+    "name": "Suraj Pal",
+    "mail": "suraj.pal@sharikaindia.com",
+    "desig": "Assistant Manager",
+    "dept": "Tender",
+    "head": "Shalini Mittal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/035",
+    "name": "Vinod Kumar Singh",
+    "mail": "vinod.singh@sharikaindia.com",
+    "desig": "Sr. Executive",
+    "dept": "PMO",
+    "head": "Sunita K Padmaji",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/036",
+    "name": "Garvita Asati",
+    "mail": "cfo@sharikaindia.com",
+    "desig": "CFO",
+    "dept": "Finance & Admin",
+    "head": "Sanjay Verma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/037",
+    "name": "Shilpa Gupta",
+    "mail": "shilpagupta3333@gmail.com",
+    "desig": "Sr. Executive - Account",
+    "dept": "Finance & Admin",
+    "head": "Garvita Asati",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/038",
+    "name": "Mohammad Ahsan",
+    "mail": "ahsan.sofi@sharikaindia.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/046",
+    "name": "Pravendra Kumar",
+    "mail": "sel.nod.046@sharikaindia.com",
+    "desig": "Electrician",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": true,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/047",
+    "name": "Swati Khera",
+    "mail": "swati.khera@sharikaindia.com",
+    "desig": "Manager- Digital Marketing",
+    "dept": "Marketing & Sales",
+    "head": "Rajinder Kaul",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/048",
+    "name": "Bal Vir Singh",
+    "mail": "balbeer.singhi9999@gmail.com",
+    "desig": "Site Supervisior",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/051",
+    "name": "Anand Prajapati",
+    "mail": "anandpjt2003@gmail.com",
+    "desig": "Account Executive",
+    "dept": "Finance & Admin",
+    "head": "Garvita Asati",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/052",
+    "name": "Pushpa Yadav",
+    "mail": "ypushpa438@gmail.com",
+    "desig": "Company Secretary",
+    "dept": "Finance & Admin",
+    "head": "Garvita Asati",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/053",
+    "name": "Prashant Kumar",
+    "mail": "prashant.kumar@sharikaindia.com",
+    "desig": "Engineer",
+    "dept": "Marketing & Sales",
+    "head": "Ravi bhan",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/056",
+    "name": "Sandeep Kumar",
+    "mail": "sandeep.kumar@sharikaindia.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/063",
+    "name": "Harsh Pratap Singh Tomar",
+    "mail": "harsh.tomar@sharikaindia.com",
+    "desig": "Engineer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/064",
+    "name": "Sushmita Roy",
+    "mail": "hr@sharikaindia.com",
+    "desig": "Senior Executive - HR",
+    "dept": "HR & Admin",
+    "head": "Sanjay Verma",
+    "placeholder": false,
+    "role": "admin"
+  },
+  {
+    "code": "SEL/NOD/067",
+    "name": "Brijendra Yadav",
+    "mail": "brijendramech@gmail.com",
+    "desig": "Assistant Manager - Design & QC",
+    "dept": "Engineering",
+    "head": "Sushil badlani",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/068",
+    "name": "Amit Kumar",
+    "mail": "erkamit31@gmail.com",
+    "desig": "Testing & Commissioning \u00a0Engineer",
+    "dept": "QC",
+    "head": "Sushil badlani",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/069",
+    "name": "Ritika Mohapatra",
+    "mail": "info@sharikaindia.com",
+    "desig": "Executive - Admin",
+    "dept": "HR & Admin",
+    "head": "Sushmita Roy",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/070",
+    "name": "Ankit Kumar",
+    "mail": "yadawankit420@gmail.com",
+    "desig": "Safety Officer",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/073",
+    "name": "Prem Singh",
+    "mail": "sel.nod.073@sharikaindia.com",
+    "desig": "House Keeper",
+    "dept": "HR & Admin",
+    "head": "Sushmita Roy",
+    "placeholder": true,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/074",
+    "name": "Mitesh Pant",
+    "mail": "mitesh.pant@sharikaindia.com",
+    "desig": "GM-Operations",
+    "dept": "Project Management",
+    "head": "Ravi bhan",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/075",
+    "name": "Pratick Sarkar",
+    "mail": "hr.operations@sharikaindia.com",
+    "desig": "Executive - HR",
+    "dept": "HR & Admin",
+    "head": "Sushmita Roy",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/076",
+    "name": "Adarsh Kumar Gupta",
+    "mail": "adarsh.gupta@sharikaindia.com",
+    "desig": "Project Manager",
+    "dept": "Project Management",
+    "head": "Karan Aggarwal",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/077",
+    "name": "Naincy Srivastava",
+    "mail": "qms@sharikaindia.com",
+    "desig": "Quality & Compliance - Executive",
+    "dept": "HR & Admin",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/078",
+    "name": "Shubham Kumar",
+    "mail": "shubham.kumar@sharikaindia.com",
+    "desig": "Marketing Engineer",
+    "dept": "Marketing & Sales",
+    "head": "Swati Khera",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/080",
+    "name": "Akash Mall",
+    "mail": "akash.mall@sharikaindia.com",
+    "desig": "GET",
+    "dept": "Engineering",
+    "head": "Anoop Rajput",
+    "placeholder": false,
+    "role": "admin"
+  },
+  {
+    "code": "SEL/NOD/081",
+    "name": "Aishaniya Singh",
+    "mail": "aishanya.singh@sharikaindia.com",
+    "desig": "GET",
+    "dept": "Engineering",
+    "head": "Anoop Rajput",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/079",
+    "name": "Ashish Kumar",
+    "mail": "purchase@sharikaindia.com",
+    "desig": "Purchase Executive",
+    "dept": "Purchase & Store",
+    "head": "Sonu Singh Rana",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/082",
+    "name": "Chandrashekar Chauhan",
+    "mail": "chandrashekharchauhan198@gmail.com",
+    "desig": "Technician",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/083",
+    "name": "Ashish Jagga",
+    "mail": "ashishjaga96@gmail.com",
+    "desig": "Jr. Technician",
+    "dept": "Engineering",
+    "head": "Somdutt Sharma",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/100",
+    "name": "Anoop Rajput",
+    "mail": "anoop.rajput@sharikaindia.com",
+    "desig": "Solution Architect",
+    "dept": "Engineering",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/200",
+    "name": "Karan Aggarwal",
+    "mail": "karan.aggarwal@sharikaindia.com",
+    "desig": "Project Manager",
+    "dept": "Project Management",
+    "head": "Mitesh Pant",
+    "placeholder": false,
+    "role": "employee"
+  },
+  {
+    "code": "SEL/NOD/059",
+    "name": "Somdutt Sharma",
+    "mail": "sd.sharma@sharikaindia.com",
+    "desig": "General Manager",
+    "dept": "Engineering",
+    "head": "Sanjay Verma",
+    "placeholder": false,
+    "role": "employee"
+  }
+]
