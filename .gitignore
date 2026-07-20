@@ -4,3 +4,4 @@ server/data/
 server/uploads/
 server/.env
 .DS_Store
+server/license/license-private.pem

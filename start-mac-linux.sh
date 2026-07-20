@@ -1,5 +1,5 @@
 #!/bin/bash
-# Meridian HRMS — one-command start for Mac/Linux
+# SEL HRMS — one-command start for Mac/Linux
 set -e
 cd "$(dirname "$0")"
 
@@ -25,7 +25,7 @@ cd ../client
 [ -d node_modules ] || npm install --no-audit --no-fund
 [ -d dist ] || npm run build
 
-echo "[4/4] Starting Meridian HRMS…"
+echo "[4/4] Starting SEL HRMS…"
 echo ""
 echo "  Open http://localhost:4000 in your browser."
 echo "  Admin sign-in: admin@company.com / admin123"

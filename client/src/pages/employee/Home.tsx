@@ -12,7 +12,7 @@ const fmtTime = (iso: string | null) =>
   iso ? new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
 
 /* The "workday arc": punch-in rises at the left horizon, punch-out sets at the
-   right. The sun travels the meridian as the day progresses — this is the
+   right. The sun travels the SEL as the day progresses — this is the
    product's signature element. */
 function WorkdayArc({ record }: { record: AttendanceRecord | null }) {
   const [, tick] = useState(0);

@@ -46,8 +46,18 @@ export default function AdminLayout() {
       {/* Sidebar (desktop) */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-mist-200/70 bg-white/60 p-4 backdrop-blur-xl dark:border-ink-700 dark:bg-ink-900/60 lg:flex">
         <div className="mb-8 flex items-center gap-2.5 px-2">
+<<<<<<< HEAD
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cobalt-500">
+            <svg viewBox="0 0 32 32" className="h-6 w-6">
+              <path d="M8 22 A9 9 0 0 1 24 22" stroke="#F0A020" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <circle cx="16" cy="11" r="2.5" fill="white" />
+            </svg>
+          </div>
+          <span className="font-display text-lg font-extrabold tracking-tight">SEL</span>
+=======
           <img src="/logo.png" alt="SEL" className="h-9 w-9 object-contain" />
           <span className="font-display text-lg font-extrabold tracking-tight">SEL HRMS</span>
+>>>>>>> ed260a70ae8d6f77d6e81f47c700f72a628e8802
         </div>
         {links}
         <div className="mt-auto">

@@ -1,4 +1,4 @@
-# Meridian HRMS — Guide for HR (no technical background needed)
+# SEL HRMS — Guide for HR (no technical background needed)
 
 This guide walks you through starting the system and doing everyday HR work. You only need to do the "One-time setup" once.
 

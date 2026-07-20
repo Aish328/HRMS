@@ -31,6 +31,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     tokenStore.clear();
     window.dispatchEvent(new Event('hrms:unauthorized'));
   }
+  // 402 = license gate. Broadcast so the app can show a full-screen lock.
+  if (res.status === 402) {
+    try {
+      const data = await res.clone().json();
+      window.dispatchEvent(new CustomEvent('hrms:locked', { detail: data }));
+    } catch { window.dispatchEvent(new CustomEvent('hrms:locked', { detail: {} })); }
+  }
   if (!res.ok) {
     let message = 'Something went wrong. Try again.';
     try {
