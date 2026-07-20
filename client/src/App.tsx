@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider, useAuth } from './store/auth';
 import { ToastProvider } from './components/Toast';
 import { RequireRole } from './components/shared';
+import LicenseLock from './components/LicenseLock';
 import Login from './pages/Login';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
+        <LicenseLock />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<RootRedirect />} />

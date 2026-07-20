@@ -15,8 +15,8 @@ if not exist node_modules call npm install --no-audit --no-fund
 if not exist .env copy .env.example .env >nul
 
 if not exist data\hrms.db (
-  echo [2/4] Loading sample data...
-  call npm run seed
+  echo [2/4] Loading your organisation data...
+  call node scripts/import-org.js
 ) else (
   echo [2/4] Existing data found - keeping it.
 )
@@ -29,7 +29,7 @@ if not exist dist call npm run build
 echo [4/4] Starting SEL HRMS...
 echo.
 echo   Open http://localhost:4000 in your browser.
-echo   Admin sign-in: admin@company.com / admin123
+echo   Admin sign-in: akash.mall@sharikaindia.com / nice
 echo   Keep this window open. Close it to stop the system.
 echo.
 cd ..\server

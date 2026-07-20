@@ -140,6 +140,9 @@ export function RequireRole({ role, children }: { role: 'admin' | 'employee'; ch
     return <div className="flex h-screen items-center justify-center"><Skeleton className="h-10 w-40" /></div>;
   }
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== role) return <Navigate to={user.role === 'admin' ? '/admin' : '/app'} replace />;
+  // Admins may enter employee-gated areas too (so they can punch in like anyone
+  // else). Employees still cannot reach admin-only routes.
+  const allowed = user.role === role || (role === 'employee' && user.role === 'admin');
+  if (!allowed) return <Navigate to={user.role === 'admin' ? '/admin' : '/app'} replace />;
   return <>{children}</>;
 }

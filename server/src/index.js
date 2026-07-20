@@ -13,6 +13,7 @@ import { dashboardRouter, notificationsRouter, activityRouter, reportsRouter } f
 import orgRouter from './routes/org.js';
 import { requireAuth } from './middleware/auth.js';
 import { uploadsDir } from './utils/helpers.js';
+import { licenseGate, licenseStatusHandler, verifyLicense } from './license.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -36,6 +37,12 @@ app.use(cors({ origin: true }));
 app.use(express.json({ limit: '8mb' })); // selfies arrive as base64 JSON
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+// License: public status endpoint (always reachable) + gate for everything else.
+// Mounted before all /api routers so an expired license locks the whole app.
+// See docs/LICENSING.md — disclosed evaluation license, not a hidden mechanism.
+app.get('/api/license/status', licenseStatusHandler);
+app.use('/api', licenseGate);
 
 app.use('/api/auth', authRouter);
 app.use('/api/employees', employeesRouter);
@@ -66,4 +73,7 @@ app.use((err, _req, res, _next) => {
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`HRMS server running → http://localhost:${PORT}`);
+  const lic = verifyLicense();
+  if (lic.ok) console.log(`License OK — licensed to "${lic.license.licensee}", ${lic.daysLeft} day(s) remaining (expires ${lic.license.expires}).`);
+  else console.warn(`⚠ License ${lic.reason}: ${lic.detail} — the app is LOCKED until a valid license is present.`);
 });
