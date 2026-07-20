@@ -23,6 +23,11 @@ export default function EmployeeLayout() {
           <p className="font-display text-base font-bold leading-tight">Hi, {user?.name?.split(' ')[0]} 👋</p>
         </div>
         <div className="flex items-center gap-1">
+          {user?.role === 'admin' && (
+            <NavLink to="/admin" className="mr-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-cobalt-600 transition hover:bg-cobalt-400/10 dark:text-cobalt-300">
+              ← Admin
+            </NavLink>
+          )}
           <ThemeToggle />
           <NotificationBell />
         </div>

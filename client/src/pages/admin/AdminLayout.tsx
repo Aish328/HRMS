@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Fingerprint, CalendarCheck2, FileBarChart2, ScrollText, LogOut, Menu, Network } from 'lucide-react';
+import { LayoutDashboard, Users, Fingerprint, CalendarCheck2, FileBarChart2, ScrollText, LogOut, Menu, Network, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../store/auth';
 import { NotificationBell, ThemeToggle } from '../../components/shared';
@@ -32,6 +32,12 @@ export default function AdminLayout() {
           <Icon size={18} /> {label}
         </NavLink>
       ))}
+      {/* Admins can clock in too — routes into the employee punch flow */}
+      <NavLink to="/app/punch" onClick={() => setMobileOpen(false)}
+        className="mt-1 flex items-center gap-3 rounded-xl border border-brand-400/30 bg-brand-400/10 px-3.5 py-2.5 text-sm font-semibold text-brand-500 transition hover:bg-brand-400/20"
+      >
+        <Clock size={18} /> Punch in / out
+      </NavLink>
     </nav>
   );
 
@@ -57,11 +63,9 @@ export default function AdminLayout() {
         <div className="fixed inset-0 z-40 bg-ink-950/50 lg:hidden" onClick={() => setMobileOpen(false)}>
           <div className="glass h-full w-64 rounded-none p-4" onClick={(e) => e.stopPropagation()}>
             <div className="mb-6 px-2 flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white p-0.5 shadow-glass">
-                <img src="/logo.png" alt="SEL" className="h-7 w-7 object-contain" />
-              </div>
-              <span className="font-display text-lg font-extrabold">SEL HRMS</span>
-            </div>
+            <img src="/logo.png" alt="SEL" className="h-8 w-8 object-contain" />
+            <span className="font-display text-lg font-extrabold">SEL HRMS</span>
+          </div>
             {links}
           </div>
         </div>
