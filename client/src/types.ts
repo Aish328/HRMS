@@ -13,7 +13,7 @@ export interface User {
   managerId: number | null;
   manager?: { id: number; name: string; designation: string | null } | null;
   isManager?: boolean;
-  leaveBalance: { casual: number; sick: number; earned: number };
+  leaveBalance: { casual: number; sick: number; earned: number; comp?: number };
 }
 
 export interface AttendanceRecord {

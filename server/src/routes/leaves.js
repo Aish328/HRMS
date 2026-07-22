@@ -11,6 +11,8 @@ const BALANCE_COLUMN = {
   casual: 'leave_balance_casual',
   sick: 'leave_balance_sick',
   earned: 'leave_balance_earned',
+  comp: 'leave_balance_comp',   // Comp-Off (COL) — earning added in Phase 2
+  // 'unpaid' (LOP) has no balance column — always allowed
 };
 
 const APPROVALS_SQL = `
@@ -23,20 +25,30 @@ function withApprovals(leave) {
 }
 
 const applySchema = z.object({
-  type: z.enum(['casual', 'sick', 'earned', 'unpaid']),
+  // casual=CL, sick=SL, earned=EL, comp=COL, unpaid=LOP
+  type: z.enum(['casual', 'sick', 'earned', 'comp', 'unpaid']),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Pick a start date.'),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Pick an end date.'),
   reason: z.string().min(5, 'Add a short reason (at least 5 characters).').max(500),
+  halfDay: z.boolean().optional().default(false),
+  halfSession: z.enum(['first', 'second']).optional(),
 });
 
 // ---- Employee: apply (goes to manager first, or straight to HR if no manager) ----
 router.post('/', (req, res) => {
   const parsed = applySchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
-  const { type, startDate, endDate, reason } = parsed.data;
+  const { type, startDate, endDate, reason, halfDay, halfSession } = parsed.data;
 
   if (endDate < startDate) return res.status(400).json({ error: 'End date must be on or after the start date.' });
-  const days = daysBetweenInclusive(startDate, endDate);
+
+  // Half-day rules: must be a single day and must name a session.
+  if (halfDay) {
+    if (startDate !== endDate) return res.status(400).json({ error: 'A half-day leave must be for a single day.' });
+    if (!halfSession) return res.status(400).json({ error: 'Select which half — First or Second session.' });
+  }
+
+  const days = halfDay ? 0.5 : daysBetweenInclusive(startDate, endDate);
   if (days > 30) return res.status(400).json({ error: 'A single request cannot exceed 30 days.' });
 
   const overlap = db.prepare(
@@ -46,16 +58,20 @@ router.post('/', (req, res) => {
   if (overlap) return res.status(409).json({ error: 'You already have a leave request overlapping these dates.' });
 
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
-  if (type !== 'unpaid' && user[BALANCE_COLUMN[type]] < days) {
-    return res.status(400).json({ error: `Not enough ${type} leave balance (${user[BALANCE_COLUMN[type]]} left, ${days} requested).` });
+  if (type !== 'unpaid') {
+    const bal = user[BALANCE_COLUMN[type]] ?? 0;
+    if (bal < days) {
+      const label = { casual: 'Casual', sick: 'Sick', earned: 'Earned', comp: 'Comp-Off' }[type];
+      return res.status(400).json({ error: `Not enough ${label} leave balance (${bal} left, ${days} requested).` });
+    }
   }
 
   // If the employee has a manager, the request starts at the manager stage.
   const initialStatus = user.manager_id ? 'pending' : 'pending_hr';
 
   const info = db.prepare(
-    'INSERT INTO leaves (user_id, type, start_date, end_date, days, reason, status) VALUES (?,?,?,?,?,?,?)'
-  ).run(req.user.id, type, startDate, endDate, days, reason, initialStatus);
+    'INSERT INTO leaves (user_id, type, start_date, end_date, days, reason, status, half_day, half_session) VALUES (?,?,?,?,?,?,?,?,?)'
+  ).run(req.user.id, type, startDate, endDate, days, reason, initialStatus, halfDay ? 1 : 0, halfDay ? halfSession : null);
   const leaveId = Number(info.lastInsertRowid);
 
   recordApproval(leaveId, req.user.id, 'employee', 'submitted', reason);
@@ -236,6 +252,63 @@ router.post('/:id/decision', requireRole('admin'), (req, res) => {
   });
 
   res.json({ leave: withApprovals(db.prepare('SELECT * FROM leaves WHERE id = ?').get(leave.id)) });
+});
+
+/* ---------------- Phase 1: HR leave-policy settings & rollout ---------------- */
+import { getLeaveSettings } from '../db.js';
+import { grantCurrentFyBalances, runYearEndRoll, currentFyLabel } from '../leavePolicy.js';
+
+// Anyone signed in can read the current quotas (the apply form shows them).
+router.get('/settings', (_req, res) => {
+  res.json({ settings: getLeaveSettings(), fy: currentFyLabel() });
+});
+
+// HR updates quotas / FY rules (no code change needed).
+router.put('/settings', requireRole('admin'), (req, res) => {
+  const schema = z.object({
+    cl_quota: z.number().min(0).max(365),
+    sl_quota: z.number().min(0).max(365),
+    el_quota: z.number().min(0).max(365),
+    el_carry_forward_max: z.number().min(0).max(365),
+    el_balance_cap: z.number().min(0).max(365),
+    fy_start_month: z.number().int().min(1).max(12).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
+  const s = parsed.data;
+  db.prepare(
+    `UPDATE leave_settings SET cl_quota=?, sl_quota=?, el_quota=?, el_carry_forward_max=?, el_balance_cap=?,
+       fy_start_month=COALESCE(?, fy_start_month), updated_at=datetime('now') WHERE id=1`
+  ).run(s.cl_quota, s.sl_quota, s.el_quota, s.el_carry_forward_max, s.el_balance_cap, s.fy_start_month ?? null);
+  logActivity(req.user.id, 'leave_settings_update', JSON.stringify(s), req.ip);
+  res.json({ settings: getLeaveSettings() });
+});
+
+// Rollout: reset ALL employees to current-FY pro-rata balances. Used once when
+// applying the new policy. EL carry-forward defaults to 0 here (fresh start);
+// year-end carry-forward is handled by the year-end roll instead.
+router.post('/rollout-balances', requireRole('admin'), (req, res) => {
+  const users = db.prepare('SELECT id FROM users').all();
+  let n = 0;
+  transaction(() => { for (const u of users) { grantCurrentFyBalances(u.id); n++; } });
+  logActivity(req.user.id, 'leave_rollout', `Reset ${n} employees to current-FY pro-rata balances`, req.ip);
+  res.json({ ok: true, updated: n, fy: currentFyLabel() });
+});
+
+// Year-end roll: lapse CL/SL, carry EL forward (capped), flag excess for payroll.
+router.post('/year-end-roll', requireRole('admin'), (req, res) => {
+  const out = runYearEndRoll();
+  logActivity(req.user.id, 'leave_year_end', `Closed FY ${out.closingFy} for ${out.count} employees`, req.ip);
+  res.json({ ok: true, ...out });
+});
+
+// EL encashment flags (for payroll to read).
+router.get('/encashment-flags', requireRole('admin'), (req, res) => {
+  const rows = db.prepare(
+    `SELECT f.*, u.name, u.employee_code FROM el_encashment_flags f
+     JOIN users u ON u.id = f.user_id ORDER BY f.created_at DESC`
+  ).all();
+  res.json({ flags: rows });
 });
 
 export default router;

@@ -86,6 +86,7 @@ export function publicUser(u) {
       casual: u.leave_balance_casual,
       sick: u.leave_balance_sick,
       earned: u.leave_balance_earned,
+      comp: u.leave_balance_comp ?? 0,
     },
   };
 }
