@@ -13,7 +13,7 @@ export default function Leaves() {
   const [rows, setRows] = useState<Leave[] | null>(null);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({ type: 'casual', startDate: '', endDate: '', reason: '' });
+  const [form, setForm] = useState({ type: 'casual', startDate: '', endDate: '', reason: '', halfDay: false, halfSession: 'first' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const load = () =>
@@ -23,8 +23,8 @@ export default function Leaves() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.startDate) e.startDate = 'Pick a start date.';
-    if (!form.endDate) e.endDate = 'Pick an end date.';
-    if (form.startDate && form.endDate && form.endDate < form.startDate) e.endDate = 'End date must be on or after the start date.';
+    if (!form.halfDay && !form.endDate) e.endDate = 'Pick an end date.';
+    if (!form.halfDay && form.startDate && form.endDate && form.endDate < form.startDate) e.endDate = 'End date must be on or after the start date.';
     if (form.reason.trim().length < 5) e.reason = 'Add a short reason (at least 5 characters).';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -35,10 +35,14 @@ export default function Leaves() {
     if (!validate()) return;
     setBusy(true);
     try {
-      await api('/leaves', { method: 'POST', body: JSON.stringify(form) });
+      // For a half-day, force end = start (single day).
+      const payload = form.halfDay
+        ? { ...form, endDate: form.startDate }
+        : { type: form.type, startDate: form.startDate, endDate: form.endDate, reason: form.reason };
+      await api('/leaves', { method: 'POST', body: JSON.stringify(payload) });
       toast('success', 'Leave request sent for approval.');
       setOpen(false);
-      setForm({ type: 'casual', startDate: '', endDate: '', reason: '' });
+      setForm({ type: 'casual', startDate: '', endDate: '', reason: '', halfDay: false, halfSession: 'first' });
       load();
     } catch (e: any) { toast('error', e.message); }
     finally { setBusy(false); }
@@ -97,22 +101,48 @@ export default function Leaves() {
         <form onSubmit={submit} className="space-y-4">
           <Field label="Leave type">
             <Select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-              <option value="casual">Casual ({lb?.casual ?? 0} left)</option>
-              <option value="sick">Sick ({lb?.sick ?? 0} left)</option>
-              <option value="earned">Earned ({lb?.earned ?? 0} left)</option>
-              <option value="unpaid">Unpaid</option>
+              <option value="casual">Casual — CL ({lb?.casual ?? 0} left)</option>
+              <option value="sick">Sick — SL ({lb?.sick ?? 0} left)</option>
+              <option value="earned">Earned — EL ({lb?.earned ?? 0} left)</option>
+              <option value="comp" disabled>Comp-Off — COL ({lb?.comp ?? 0} left) — coming soon</option>
+              <option value="unpaid">Leave Without Pay — LOP</option>
             </Select>
           </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="From" error={errors.startDate}>
+
+          {/* Half-day toggle */}
+          <label className="flex items-center gap-2.5 rounded-xl border border-mist-300 px-3.5 py-2.5 dark:border-ink-600">
+            <input type="checkbox" checked={form.halfDay}
+              onChange={(e) => setForm({ ...form, halfDay: e.target.checked })}
+              className="h-4 w-4 accent-cobalt-500" />
+            <span className="text-sm font-medium">Half-day leave</span>
+          </label>
+
+          {form.halfDay && (
+            <Field label="Session">
+              <Select value={form.halfSession} onChange={(e) => setForm({ ...form, halfSession: e.target.value })}>
+                <option value="first">First session (morning)</option>
+                <option value="second">Second session (afternoon)</option>
+              </Select>
+            </Field>
+          )}
+
+          {form.halfDay ? (
+            <Field label="Date" error={errors.startDate}>
               <Input type="date" value={form.startDate} min={new Date().toISOString().slice(0, 10)}
                 onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
             </Field>
-            <Field label="To" error={errors.endDate}>
-              <Input type="date" value={form.endDate} min={form.startDate || undefined}
-                onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
-            </Field>
-          </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="From" error={errors.startDate}>
+                <Input type="date" value={form.startDate} min={new Date().toISOString().slice(0, 10)}
+                  onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+              </Field>
+              <Field label="To" error={errors.endDate}>
+                <Input type="date" value={form.endDate} min={form.startDate || undefined}
+                  onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+              </Field>
+            </div>
+          )}
           <Field label="Reason" error={errors.reason}>
             <Textarea placeholder="Why do you need this leave?" value={form.reason}
               onChange={(e) => setForm({ ...form, reason: e.target.value })} />

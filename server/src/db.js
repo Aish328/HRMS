@@ -156,6 +156,53 @@ CREATE TABLE IF NOT EXISTS holidays (
 );
 `);
 
+/* ---------------- Phase 1: leave policy (FY basis, quotas, half-day, EL rules) ---------------- */
+
+// HR-configurable leave settings (single row, id=1). Quotas & FY rules live here
+// so HR can change them without a code change (per company requirement).
+db.exec(`
+CREATE TABLE IF NOT EXISTS leave_settings (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  fy_start_month INTEGER NOT NULL DEFAULT 4,   -- financial year starts April
+  cl_quota REAL NOT NULL DEFAULT 8,
+  sl_quota REAL NOT NULL DEFAULT 7,
+  el_quota REAL NOT NULL DEFAULT 15,
+  el_carry_forward_max REAL NOT NULL DEFAULT 15, -- max EL carried into next FY
+  el_balance_cap REAL NOT NULL DEFAULT 30,       -- max EL a person can hold
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+INSERT OR IGNORE INTO leave_settings (id) VALUES (1);
+`);
+
+// Comp-Off balance column (earning built in Phase 2; column exists now so the
+// apply form can show COL with a 0 balance).
+try { db.exec('ALTER TABLE users ADD COLUMN leave_balance_comp REAL NOT NULL DEFAULT 0'); } catch { /* exists */ }
+
+// Worksite classification for Comp-Off rules (Phase 2). NOT mapped to department
+// per HR. NULL until HR classifies each employee.
+try { db.exec("ALTER TABLE users ADD COLUMN worksite_type TEXT CHECK (worksite_type IN ('site','hq'))"); } catch { /* exists */ }
+
+// Half-day support on leave rows: half_day flag + which session.
+try { db.exec('ALTER TABLE leaves ADD COLUMN half_day INTEGER NOT NULL DEFAULT 0'); } catch { /* exists */ }
+try { db.exec("ALTER TABLE leaves ADD COLUMN half_session TEXT CHECK (half_session IN ('first','second'))"); } catch { /* exists */ }
+
+// EL encashment flagging: when EL exceeds the cap at year-end, the excess is
+// recorded here for Payroll to process (HRMS never computes money).
+db.exec(`
+CREATE TABLE IF NOT EXISTS el_encashment_flags (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  fy_label TEXT NOT NULL,          -- e.g. "2026-2027"
+  days REAL NOT NULL,              -- EL days to encash (payroll multiplies by Basic)
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (user_id, fy_label)
+);
+`);
+
+export function getLeaveSettings() {
+  return db.prepare('SELECT * FROM leave_settings WHERE id = 1').get();
+}
+
 export function recordApproval(leaveId, actorId, actorRole, action, comments = '') {
   db.prepare('INSERT INTO leave_approvals (leave_id, actor_id, actor_role, action, comments) VALUES (?,?,?,?,?)')
     .run(leaveId, actorId, actorRole, action, comments);

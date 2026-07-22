@@ -20,6 +20,44 @@ export default function Leaves() {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
 
+  // ---- Phase 1: HR leave-policy settings ----
+  type Settings = { cl_quota: number; sl_quota: number; el_quota: number; el_carry_forward_max: number; el_balance_cap: number };
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [fy, setFy] = useState('');
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [rollingOut, setRollingOut] = useState(false);
+  const [showReset, setShowReset] = useState(false);
+
+  const loadSettings = () =>
+    api<{ settings: Settings; fy: string }>('/leaves/settings')
+      .then((d) => { setSettings(d.settings); setFy(d.fy); })
+      .catch((e) => toast('error', e.message));
+  useEffect(() => { loadSettings(); }, []);
+
+  const saveSettings = async () => {
+    if (!settings) return;
+    setSavingSettings(true);
+    try {
+      await api('/leaves/settings', { method: 'PUT', body: JSON.stringify({
+        cl_quota: Number(settings.cl_quota), sl_quota: Number(settings.sl_quota),
+        el_quota: Number(settings.el_quota), el_carry_forward_max: Number(settings.el_carry_forward_max),
+        el_balance_cap: Number(settings.el_balance_cap),
+      })});
+      toast('success', 'Leave quotas updated.');
+    } catch (e: any) { toast('error', e.message); }
+    finally { setSavingSettings(false); }
+  };
+
+  const runRollout = async () => {
+    setRollingOut(true);
+    try {
+      const d = await api<{ updated: number; fy: string }>('/leaves/rollout-balances', { method: 'POST' });
+      toast('success', `Balances reset for ${d.updated} employees (FY ${d.fy}).`);
+      setShowReset(false);
+    } catch (e: any) { toast('error', e.message); }
+    finally { setRollingOut(false); }
+  };
+
   const load = async () => {
     try {
       const params = new URLSearchParams({ status, q: debouncedQ, page: String(page), pageSize: String(pageSize) });
@@ -54,6 +92,39 @@ export default function Leaves() {
         <h1 className="font-display text-2xl font-extrabold tracking-tight">Leave requests</h1>
         <p className="text-sm text-ink-600/70 dark:text-mist-300/60">Approve or reject requests. Balances update automatically.</p>
       </div>
+
+      {/* Phase 1: HR leave-policy settings */}
+      {settings && (
+        <Card className="!p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="font-display text-lg font-bold">Leave policy</h2>
+              <p className="text-xs text-ink-600/60 dark:text-mist-300/50">Financial year {fy} · quotas apply pro-rata from each employee's joining date.</p>
+            </div>
+            <Button variant="secondary" loading={savingSettings} onClick={saveSettings}>Save quotas</Button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            {([
+              ['cl_quota', 'Casual (CL)'], ['sl_quota', 'Sick (SL)'], ['el_quota', 'Earned (EL)'],
+              ['el_carry_forward_max', 'EL carry-fwd max'], ['el_balance_cap', 'EL balance cap'],
+            ] as const).map(([key, label]) => (
+              <Field key={key} label={label}>
+                <Input type="number" min={0} step={0.5} value={settings[key]}
+                  onChange={(e) => setSettings({ ...settings, [key]: e.target.value === '' ? 0 : Number(e.target.value) })} />
+              </Field>
+            ))}
+          </div>
+
+          {/* Prominent reset-all-balances action */}
+          <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-saffron-400/30 bg-saffron-400/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-ink-800 dark:text-mist-100">Reset all employee balances</p>
+              <p className="text-xs text-ink-600/70 dark:text-mist-300/50">Applies the current quotas to every employee, pro-rated for FY {fy}. Use when rolling out the policy.</p>
+            </div>
+            <Button variant="danger" className="shrink-0" onClick={() => setShowReset(true)}>Reset all balances</Button>
+          </div>
+        </Card>
+      )}
 
       <Card className="!p-4">
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -129,6 +200,21 @@ export default function Leaves() {
           <Button variant={decide?.decision === 'approved' ? 'success' : 'danger'} loading={busy} onClick={submitDecision}>
             {decide?.decision === 'approved' ? 'Approve leave' : 'Reject leave'}
           </Button>
+        </div>
+      </Modal>
+
+      {/* Reset-all-balances confirmation */}
+      <Modal open={showReset} onClose={() => setShowReset(false)} title="Reset all employee balances?">
+        <p className="text-sm text-ink-700/80 dark:text-mist-200/80">
+          This will overwrite every employee's Casual, Sick and Earned leave balances with the current quotas,
+          pro-rated from each person's joining date for FY {fy}. This cannot be undone.
+        </p>
+        <p className="mt-2 text-sm text-ink-600/70 dark:text-mist-300/60">
+          Use this when first rolling out the policy — not for routine changes.
+        </p>
+        <div className="mt-5 flex justify-end gap-3">
+          <Button variant="secondary" onClick={() => setShowReset(false)}>Cancel</Button>
+          <Button variant="danger" loading={rollingOut} onClick={runRollout}>Yes, reset all balances</Button>
         </div>
       </Modal>
     </div>
