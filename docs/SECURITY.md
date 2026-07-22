@@ -1,5 +1,5 @@
 # Security notes
-
+## checking .......
 ## What's already in place
 - **Passwords** hashed with bcrypt (cost 10). Minimum 8 characters on change/reset.
 - **JWT auth**, 12-hour expiry, verified on every request; role checked server-side on every admin route.
